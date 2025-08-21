@@ -587,7 +587,7 @@ export default function ProductivityTrackerPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <TopNav />
 
-      <div className="bg-gray-50 dark:bg-gray-900/20 border-b">
+      <div className="bg-slate-50 dark:bg-slate-800/50 border-b">
         <div className="max-w-screen-xl mx-auto px-8 py-6">
           <div className="flex items-center gap-4 mb-4">
             <Link href="/">

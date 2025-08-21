@@ -330,7 +330,7 @@ export default function BizOpsAppListPage() {
     <div className="min-h-screen bg-background dark:bg-slate-900 flex flex-col">
       <TopNav />
 
-      <div className="bg-gray-50 dark:bg-slate-900/40 border-b dark:border-slate-800">
+      <div className="bg-slate-50 dark:bg-slate-800/50 border-b border-border">
         <div className="max-w-screen-xl mx-auto px-8 py-6">
           <div className="flex items-center gap-4 mb-4">
             <Link href="/">

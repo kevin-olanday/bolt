@@ -178,7 +178,7 @@ export default function Dashboard() {
       <TopNav />
 
       {/* Updated greeting section with gradient background matching mockup */}
-      <div style={{ background: "#4F46E5" }}>
+      <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 dark:from-indigo-700 dark:to-indigo-800">
         <div className="max-w-screen-xl mx-auto px-8 py-12">
           <h1 className="text-4xl font-bold text-white mb-4">
             Good {greeting}, {getUserName()}!

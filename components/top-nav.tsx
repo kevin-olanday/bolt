@@ -2,6 +2,7 @@
 import { Search, Bell, HelpCircle, Zap, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import Link from "next/link"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,14 +19,14 @@ export function TopNav() {
     <header className="sticky top-0 z-50 w-full shadow-lg" style={{ background: "#4F46E5" }}>
       <div className="max-w-screen-xl mx-auto flex h-16 items-center justify-between px-8">
         {/* Left: Logo and Product Name */}
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/30">
               <Zap className="h-4 w-4 text-white" />
             </div>
             <h1 className="text-2xl font-black tracking-tight text-white">BOLT</h1>
           </div>
-        </div>
+        </Link>
 
         <div className="flex items-center gap-2">
           {/* Search */}
