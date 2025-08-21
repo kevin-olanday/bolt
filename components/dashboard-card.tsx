@@ -172,9 +172,9 @@ export function DashboardCard({
           className={cn(
             "transition-all duration-300 font-medium text-xs w-full h-8 whitespace-normal leading-tight",
             gradient
-              ? "bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50"
+              ? "bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50 cursor-pointer"
               : isEnabled
-                ? "bg-[#4F46E5] hover:bg-[#14B8A6] text-white shadow-lg hover:shadow-xl border-0 transition-colors duration-300"
+                ? "bg-[#4F46E5] group-hover:bg-[#14B8A6] hover:bg-[#14B8A6] text-white shadow-lg hover:shadow-xl border-0 transition-colors duration-300 cursor-pointer"
                 : hasAccess
                   ? "bg-[#E2E8F0] dark:bg-slate-700 text-muted-foreground cursor-not-allowed"
                   : "bg-orange-100 text-orange-600 cursor-not-allowed border border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800",

@@ -16,6 +16,9 @@ import {
   MessageSquare,
   MessageCircle,
   Zap,
+  Sun,
+  Moon,
+  Star,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useEffect, useState } from "react"
@@ -170,7 +173,7 @@ export default function Dashboard() {
   }
 
   const getUserName = () => {
-    return "there" // Generic greeting since we're using SSO and no profiles table
+    return "Kevin" // Generic greeting since we're using SSO and no profiles table
   }
 
   return (
@@ -178,19 +181,28 @@ export default function Dashboard() {
       <TopNav />
 
       {/* Updated greeting section with gradient background matching mockup */}
-      <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 dark:from-indigo-700 dark:to-indigo-800">
-        <div className="max-w-screen-xl mx-auto px-8 py-12">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Good {greeting}, {getUserName()}!
-          </h1>
-          <p className="text-white/90 max-w-4xl leading-relaxed text-lg">
-            Welcome to the <strong>Business Operations Launchpad and Toolkit (BOLT)</strong> — {upliftingMessage}
-          </p>
-        </div>
+              <div className="bg-slate-800 dark:bg-slate-900 relative overflow-hidden border-b border-slate-700 dark:border-slate-800 shadow-lg">
+
+        
+                  <div className="max-w-screen-xl mx-auto px-8 py-12 relative z-10">
+            <h1 className="text-4xl font-bold text-white mb-4 flex items-center gap-3">
+              {greeting === "morning" ? (
+                <Sun className="w-12 h-12 text-yellow-300" />
+              ) : greeting === "evening" ? (
+                <Moon className="w-12 h-12 text-indigo-300" />
+              ) : (
+                <Star className="w-12 h-12 text-blue-300" />
+              )}
+              Good {greeting}, {getUserName()}!
+            </h1>
+            <p className="text-white/90 max-w-4xl leading-relaxed text-lg">
+              Welcome to the <strong>Business Operations Launchpad and Toolkit (BOLT)</strong> — {upliftingMessage}
+            </p>
+          </div>
       </div>
 
       <main className="flex-1">
-        <div className="max-w-screen-xl mx-auto px-8 py-8 bg-[#F1F5F9] dark:bg-slate-900">
+        <div className="max-w-screen-xl mx-auto px-8 py-8 bg-[#F1F5F9] dark:bg-slate-900 mt-6">
           <QuickLinksHorizontal />
 
           <div className="mb-6">
@@ -231,25 +243,37 @@ export default function Dashboard() {
         </div>
       </main>
 
-      <footer className="bg-[#F1F5F9] dark:bg-slate-900 border-t mt-auto">
+      <footer className="bg-slate-800 dark:bg-slate-900 border-t border-slate-700 dark:border-slate-800 mt-auto shadow-lg">
         <div className="max-w-screen-xl mx-auto px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          {/* Main Footer Content */}
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
+            
+            {/* Left Section - App Version */}
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#4F46E5] to-[#14B8A6] flex items-center justify-center shadow-lg">
-                <Wrench className="h-3 w-3 text-white" />
+              <div className="w-6 h-6 rounded-lg bg-slate-600 dark:bg-slate-700 flex items-center justify-center hover:bg-slate-500 dark:hover:bg-slate-600 transition-all duration-300 group">
+                <Zap className="h-3 w-3 text-slate-300 dark:text-slate-400 group-hover:animate-pulse group-hover:text-yellow-300" />
               </div>
-              <span className="text-sm font-medium text-muted-foreground">© 2024 BOLT. All rights reserved.</span>
+              <span className="text-sm font-medium text-slate-300 dark:text-slate-400">BOLT v1.0.0</span>
             </div>
-            <div className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
-              <a href="#" className="hover:text-foreground transition-colors hover:underline">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-foreground transition-colors hover:underline">
-                Terms of Service
-              </a>
-              <a href="#" className="hover:text-foreground transition-colors hover:underline">
-                Support
-              </a>
+
+            {/* Center Section - Last Updated (Hidden on small screens) */}
+            <div className="hidden lg:block text-center">
+              <span className="text-xs text-slate-500 dark:text-slate-500">
+                Last updated: Aug 22, 2025
+              </span>
+            </div>
+
+            {/* Right Section - Links */}
+            <div className="flex items-center gap-6">
+              {/* Navigation Links */}
+              <div className="flex items-center gap-6 text-sm">
+                <a href="#" className="text-slate-400 dark:text-slate-500 hover:text-slate-200 dark:hover:text-slate-300 transition-all duration-200 hover:underline decoration-slate-400 hover:decoration-slate-200">
+                  Documentation
+                </a>
+                <a href="#" className="text-slate-400 dark:text-slate-500 hover:text-slate-200 dark:hover:text-slate-300 transition-all duration-200 hover:underline decoration-slate-400 hover:decoration-slate-200">
+                  Report Issue
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 "use client"
-import { Search, Bell, HelpCircle, Zap, Settings } from "lucide-react"
+import { Search, Bell, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
@@ -51,15 +51,7 @@ export function TopNav() {
             </Badge>
           </Button>
 
-          {/* Help */}
-          <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-            <HelpCircle className="h-4 w-4" />
-          </Button>
 
-          {/* Settings */}
-          <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-            <Settings className="h-4 w-4" />
-          </Button>
 
           {/* Theme Toggle */}
           <div className="text-white">
@@ -79,8 +71,8 @@ export function TopNav() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <div className="flex items-center justify-start gap-2 p-2">
                 <div className="flex flex-col space-y-1 leading-none">
-                  <p className="font-medium">John Doe</p>
-                  <p className="w-[200px] truncate text-sm text-muted-foreground">john.doe@company.com</p>
+                  <p className="font-medium">Kevin Olanday</p>
+                  <p className="w-[200px] truncate text-sm text-muted-foreground">kevin.olanday@company.com</p>
                 </div>
               </div>
               <DropdownMenuSeparator />
@@ -88,7 +80,7 @@ export function TopNav() {
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Log out</DropdownMenuItem>
+              <DropdownMenuItem>Sign Out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

@@ -587,18 +587,18 @@ export default function ProductivityTrackerPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <TopNav />
 
-      <div className="bg-slate-50 dark:bg-slate-800/50 border-b">
+      <div className="bg-gradient-to-r from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-800/50 dark:via-indigo-900/20 dark:to-slate-800/50 border-b">
         <div className="max-w-screen-xl mx-auto px-8 py-6">
           <div className="flex items-center gap-4 mb-4">
             <Link href="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
+              <Button variant="ghost" size="sm" className="hover:scale-105 transition-transform duration-200">
+                <ArrowLeft className="h-4 w-4 mr-2 hover:-translate-x-1 transition-transform duration-200" />
                 Back to Dashboard
               </Button>
             </Link>
           </div>
           <div className="flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-indigo-600" />
+            <BarChart3 className="h-6 w-6 text-indigo-600 hover:scale-110 hover:rotate-3 transition-all duration-300 cursor-pointer" />
             <h1 className="text-3xl font-bold text-foreground">Productivity Tracker</h1>
           </div>
           <p className="mt-2 text-muted-foreground">Track and manage your daily work activities</p>
@@ -613,14 +613,14 @@ export default function ProductivityTrackerPage() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => navigateDate("prev")}>
-                      <ChevronLeft className="h-4 w-4" />
+                    <Button variant="outline" size="sm" onClick={() => navigateDate("prev")} className="hover:scale-105 hover:shadow-md transition-all duration-200">
+                      <ChevronLeft className="h-4 w-4 hover:-translate-x-0.5 transition-transform duration-200" />
                     </Button>
-                    <div className="px-3 py-2 text-sm font-medium bg-gray-50 dark:bg-gray-800 rounded-md min-w-[200px] text-center">
+                    <div className="px-3 py-2 text-sm font-medium bg-gray-50 dark:bg-gray-800 rounded-md min-w-[200px] text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                       {getDateDisplayText()}
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => navigateDate("next")}>
-                      <ChevronRight className="h-4 w-4" />
+                    <Button variant="outline" size="sm" onClick={() => navigateDate("next")} className="hover:scale-105 hover:shadow-md transition-all duration-200">
+                      <ChevronRight className="h-4 w-4 hover:translate-x-0.5 transition-transform duration-200" />
                     </Button>
                   </div>
 
@@ -650,9 +650,9 @@ export default function ProductivityTrackerPage() {
                       <Button
                         type="button"
                         variant="outline"
-                        className="!border-indigo-200 !text-indigo-600 hover:!bg-indigo-50 dark:!border-indigo-900 dark:!text-indigo-400 dark:hover:!bg-indigo-950/30"
+                        className="!border-indigo-200 !text-indigo-600 hover:!bg-indigo-50 dark:!border-indigo-900 dark:!text-indigo-400 dark:hover:!bg-indigo-950/30 hover:scale-105 hover:shadow-lg transition-all duration-200"
                       >
-                        <Plus className="h-4 w-4 mr-2" />
+                        <Plus className="h-4 w-4 mr-2 hover:rotate-90 transition-transform duration-300" />
                         New Entry
                       </Button>
                     </DialogTrigger>
@@ -767,9 +767,9 @@ export default function ProductivityTrackerPage() {
                     type="button"
                     variant="outline"
                     onClick={() => hasActiveFilters ? setIsExportDialogOpen(true) : exportEntriesToCsv(false)}
-                    className="!border-indigo-200 !text-indigo-600 hover:!bg-indigo-50 dark:!border-indigo-900 dark:!text-indigo-400 dark:hover:!bg-indigo-950/30"
+                    className="!border-indigo-200 !text-indigo-600 hover:!bg-indigo-50 dark:!border-indigo-900 dark:!text-indigo-400 dark:hover:!bg-indigo-950/30 hover:scale-105 hover:shadow-lg transition-all duration-200"
                   >
-                    <Download className="h-4 w-4 mr-2" /> Export CSV
+                    <Download className="h-4 w-4 mr-2 hover:animate-bounce" /> Export CSV
                   </Button>
                 </div>
               </div>
@@ -813,8 +813,8 @@ export default function ProductivityTrackerPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg">
-                    <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg hover:scale-110 hover:rotate-6 transition-all duration-300 cursor-pointer">
+                    <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400 hover:animate-pulse" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Entry Count</p>
@@ -827,8 +827,8 @@ export default function ProductivityTrackerPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg">
-                    <Ticket className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg hover:scale-110 hover:rotate-12 transition-all duration-300 cursor-pointer">
+                    <Ticket className="h-5 w-5 text-indigo-600 dark:text-indigo-400 hover:animate-spin" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Ticket Count</p>
@@ -841,8 +841,8 @@ export default function ProductivityTrackerPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                    <Clock className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg hover:scale-110 hover:-rotate-6 transition-all duration-300 cursor-pointer">
+                    <Clock className="h-5 w-5 text-green-600 dark:text-green-400 hover:animate-ping" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Total Duration</p>
@@ -861,12 +861,12 @@ export default function ProductivityTrackerPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 hover:scale-110 hover:text-indigo-500 transition-all duration-300" />
                     <Input
                       placeholder="Search entries and tickets..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -970,17 +970,17 @@ export default function ProductivityTrackerPage() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleEditEntry(entry)}
-                                className="h-8 w-8 p-0"
+                                className="h-8 w-8 p-0 hover:scale-110 hover:shadow-md transition-all duration-200"
                               >
-                                <Edit className="h-4 w-4" />
+                                <Edit className="h-4 w-4 hover:rotate-12 transition-transform duration-300" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDeleteEntry(entry.id)}
-                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 hover:scale-110 hover:shadow-md transition-all duration-200"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-4 w-4 hover:animate-pulse" />
                               </Button>
                             </div>
                           </td>
