@@ -89,6 +89,7 @@ export default function ProductivityTrackerPage() {
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false)
   const [isEditEntryOpen, setIsEditEntryOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<ProductivityEntry | null>(null)
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
   const [sortField, setSortField] = useState<keyof ProductivityEntry>("date")
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
   const [tableExists, setTableExists] = useState<boolean | null>(null)
@@ -410,7 +411,10 @@ export default function ProductivityTrackerPage() {
   const uniqueProjects = [...new Set(entries.map((entry) => entry.activity).filter(Boolean))]
   const uniqueTickets = [...new Set(entries.map((entry) => entry.ticket).filter(Boolean))]
 
-  const exportEntriesToCsv = () => {
+  const exportEntriesToCsv = (exportAll: boolean = false) => {
+    const dataToExport = exportAll ? entries : filteredEntries
+    const filename = exportAll ? `productivity-entries-all-${new Date().toISOString().slice(0, 10)}.csv` : `productivity-entries-filtered-${new Date().toISOString().slice(0, 10)}.csv`
+
     const headerLabels = [
       "Date",
       "Activity",
@@ -426,7 +430,7 @@ export default function ProductivityTrackerPage() {
       const escaped = str.replace(/"/g, '""')
       return needsQuoting ? `"${escaped}"` : escaped
     }
-    const rows = filteredEntries.map((e) => [
+    const rows = dataToExport.map((e) => [
       e.date,
       e.activity,
       e.ticket ?? "",
@@ -439,12 +443,15 @@ export default function ProductivityTrackerPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = `productivity-entries-${new Date().toISOString().slice(0, 10)}.csv`
+    a.download = filename
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
+    setIsExportDialogOpen(false)
   }
+
+  const hasActiveFilters = searchTerm || filterActivity !== "all"
 
   const calculateStats = () => {
     const ticketCount = filteredEntries.filter((entry) => entry.ticket && entry.ticket.trim() !== "").length
@@ -759,7 +766,7 @@ export default function ProductivityTrackerPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={exportEntriesToCsv}
+                    onClick={() => hasActiveFilters ? setIsExportDialogOpen(true) : exportEntriesToCsv(false)}
                     className="!border-indigo-200 !text-indigo-600 hover:!bg-indigo-50 dark:!border-indigo-900 dark:!text-indigo-400 dark:hover:!bg-indigo-950/30"
                   >
                     <Download className="h-4 w-4 mr-2" /> Export CSV
@@ -768,6 +775,38 @@ export default function ProductivityTrackerPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Export Confirmation Dialog */}
+          <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-semibold text-foreground">Export Options</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6">
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  You have active filters. What would you like to export?
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    onClick={() => exportEntriesToCsv(false)}
+                    className="justify-start h-14 text-base font-medium border-2 border-indigo-300 text-indigo-600 hover:border-indigo-500 hover:bg-indigo-500 hover:text-white transition-all dark:border-indigo-700 dark:text-indigo-400 dark:hover:border-indigo-400 dark:hover:bg-indigo-400 dark:hover:text-indigo-950"
+                    variant="outline"
+                  >
+                    <Download className="h-5 w-5 mr-3 text-indigo-600 dark:text-indigo-400 group-hover:text-white dark:group-hover:text-indigo-950" />
+                    Export filtered results ({filteredEntries.length} entries)
+                  </Button>
+                  <Button
+                    onClick={() => exportEntriesToCsv(true)}
+                    className="justify-start h-14 text-base font-medium border-2 border-indigo-300 text-indigo-600 hover:border-indigo-500 hover:bg-indigo-500 hover:text-white transition-all dark:border-indigo-700 dark:text-indigo-400 dark:hover:border-indigo-400 dark:hover:bg-indigo-400 dark:hover:text-indigo-950"
+                    variant="outline"
+                  >
+                    <Download className="h-5 w-5 mr-3 text-indigo-600 dark:text-indigo-400 group-hover:text-white dark:group-hover:text-indigo-950" />
+                    Export all entries ({entries.length} entries)
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">

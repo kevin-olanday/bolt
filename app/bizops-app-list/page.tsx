@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { createClient } from "@/lib/supabase/client"
 import { TopNav } from "@/components/top-nav"
 import Link from "next/link"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface BizOpsApp {
   id: string
@@ -46,6 +47,7 @@ export default function BizOpsAppListPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [sortField, setSortField] = useState<SortField>("cmdb_asset_name")
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
 
   // Filters
   const [arlTierFilter, setArlTierFilter] = useState<string>("all")
@@ -189,7 +191,10 @@ export default function BizOpsAppListPage() {
     }
   }, [filteredApps])
 
-  const exportAppsToCsv = () => {
+  const exportAppsToCsv = (exportAll: boolean = false) => {
+    const dataToExport = exportAll ? apps : filteredApps
+    const filename = exportAll ? `bizops-apps-all-${new Date().toISOString().slice(0, 10)}.csv` : `bizops-apps-filtered-${new Date().toISOString().slice(0, 10)}.csv`
+
     const visible = columns.filter((c) => c.visible)
     const header = visible.map((c) => c.label)
     const toCsvValue = (value: unknown) => {
@@ -199,7 +204,7 @@ export default function BizOpsAppListPage() {
       const escaped = str.replace(/"/g, '""')
       return needsQuoting ? `"${escaped}"` : escaped
     }
-    const rows = sortedApps.map((app) =>
+    const rows = dataToExport.map((app) =>
       visible.map(({ key }) => {
         const v = (app as any)[key]
         if (typeof v === "boolean") return v ? "Yes" : "No"
@@ -211,11 +216,12 @@ export default function BizOpsAppListPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = `bizops-apps-${new Date().toISOString().slice(0, 10)}.csv`
+    a.download = filename
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
+    setIsExportDialogOpen(false)
   }
 
   const handleSort = (field: SortField) => {
@@ -380,13 +386,45 @@ export default function BizOpsAppListPage() {
 
               <Button
                 variant="outline"
-                onClick={exportAppsToCsv}
+                onClick={() => hasActiveFilters ? setIsExportDialogOpen(true) : exportAppsToCsv(false)}
                 className="text-indigo-600 border-indigo-200 hover:bg-indigo-50 bg-transparent dark:text-indigo-400 dark:border-indigo-900 dark:hover:bg-indigo-950/30"
               >
                 <Download className="w-4 h-4 mr-2" /> Export CSV
               </Button>
             </div>
           </div>
+
+          {/* Export Confirmation Dialog */}
+          <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-semibold text-foreground">Export Options</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6">
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  You have active filters. What would you like to export?
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    onClick={() => exportAppsToCsv(false)}
+                    className="justify-start h-14 text-base font-medium border-2 border-indigo-300 text-indigo-600 hover:border-indigo-500 hover:bg-indigo-500 hover:text-white transition-all dark:border-indigo-700 dark:text-indigo-400 dark:hover:border-indigo-400 dark:hover:bg-indigo-400 dark:hover:text-indigo-950"
+                    variant="outline"
+                  >
+                    <Download className="h-5 w-5 mr-3 text-indigo-600 dark:text-indigo-400 group-hover:text-white dark:group-hover:text-indigo-950" />
+                    Export filtered results ({filteredApps.length} apps)
+                  </Button>
+                  <Button
+                    onClick={() => exportAppsToCsv(true)}
+                    className="justify-start h-14 text-base font-medium border-2 border-indigo-300 text-indigo-600 hover:border-indigo-500 hover:bg-indigo-500 hover:text-white transition-all dark:border-indigo-700 dark:text-indigo-400 dark:hover:border-indigo-400 dark:hover:bg-indigo-400 dark:hover:text-indigo-950"
+                    variant="outline"
+                  >
+                    <Download className="h-5 w-5 mr-3 text-indigo-600 dark:text-indigo-400 group-hover:text-white dark:group-hover:text-indigo-950" />
+                    Export all apps ({apps.length} apps)
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* Statistics Bar */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
