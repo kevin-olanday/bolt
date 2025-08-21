@@ -116,8 +116,3 @@ export const moduleConfigs: Record<string, ModuleConfig> = {
 export const getModuleConfig = (moduleName: string): ModuleConfig | undefined => {
   return moduleConfigs[moduleName]
 }
-
-// Helper function to get all active modules
-export const getActiveModules = (): ModuleConfig[] => {
-  return Object.values(moduleConfigs).filter(module => module.status === "active")
-}
