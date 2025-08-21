@@ -16,6 +16,8 @@ import {
   Trash2,
   ArrowLeft,
   Zap,
+  BarChart3,
+  Download,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -52,7 +54,7 @@ interface ProductivityEntry {
 }
 
 const activityColors = {
-  Project: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  Project: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
   Request: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
   Incident: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
   Change: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
@@ -64,7 +66,7 @@ const activityColors = {
 }
 
 const chartColors = {
-  Project: "#3b82f6", // blue
+  Project: "#4f46e5", // indigo (theme primary)
   Request: "#10b981", // green
   Incident: "#ef4444", // red
   Change: "#f97316", // orange
@@ -236,17 +238,37 @@ export default function ProductivityTrackerPage() {
     }
 
     filtered.sort((a, b) => {
-      let aValue = a[sortField]
-      let bValue = b[sortField]
+      let aValue = a[sortField] as unknown
+      let bValue = b[sortField] as unknown
 
-      // Handle null/undefined values for ticket field
-      if (sortField === "ticket") {
-        aValue = aValue || ""
-        bValue = bValue || ""
+      // Normalize undefined/null values
+      if (aValue === undefined || aValue === null) {
+        aValue = sortField === "time_worked" ? 0 : ""
+      }
+      if (bValue === undefined || bValue === null) {
+        bValue = sortField === "time_worked" ? 0 : ""
       }
 
-      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
-      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
+      // Strings
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
+        if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
+        return 0
+      }
+
+      // Numbers
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return sortDirection === "asc" ? (aValue as number) - (bValue as number) : (bValue as number) - (aValue as number)
+      }
+
+      // Booleans
+      if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+        if (aValue === bValue) return 0
+        const aNum = aValue ? 1 : 0
+        const bNum = bValue ? 1 : 0
+        return sortDirection === "asc" ? aNum - bNum : bNum - aNum
+      }
+
       return 0
     })
 
@@ -388,6 +410,42 @@ export default function ProductivityTrackerPage() {
   const uniqueProjects = [...new Set(entries.map((entry) => entry.activity).filter(Boolean))]
   const uniqueTickets = [...new Set(entries.map((entry) => entry.ticket).filter(Boolean))]
 
+  const exportEntriesToCsv = () => {
+    const headerLabels = [
+      "Date",
+      "Activity",
+      "Ticket",
+      "Details",
+      "Duration (minutes)",
+      "Notes",
+    ]
+    const toCsvValue = (value: unknown) => {
+      const raw = value ?? ""
+      const str = String(raw)
+      const needsQuoting = /[",\n]/.test(str)
+      const escaped = str.replace(/"/g, '""')
+      return needsQuoting ? `"${escaped}"` : escaped
+    }
+    const rows = filteredEntries.map((e) => [
+      e.date,
+      e.activity,
+      e.ticket ?? "",
+      e.details,
+      e.time_worked,
+      e.notes ?? "",
+    ])
+    const csv = [headerLabels.join(","), ...rows.map((r) => r.map(toCsvValue).join(","))].join("\n")
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `productivity-entries-${new Date().toISOString().slice(0, 10)}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   const calculateStats = () => {
     const ticketCount = filteredEntries.filter((entry) => entry.ticket && entry.ticket.trim() !== "").length
     const totalDuration = filteredEntries.reduce((sum, entry) => sum + entry.time_worked, 0)
@@ -428,7 +486,10 @@ export default function ProductivityTrackerPage() {
                   </Button>
                 </Link>
               </div>
-              <h1 className="text-3xl font-bold text-foreground">Productivity Tracker</h1>
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-6 w-6 text-indigo-600" />
+                <h1 className="text-3xl font-bold text-foreground">Productivity Tracker</h1>
+              </div>
               <p className="mt-2 text-muted-foreground">Track and manage your daily work activities</p>
             </div>
           </div>
@@ -529,7 +590,10 @@ export default function ProductivityTrackerPage() {
               </Button>
             </Link>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Productivity Tracker</h1>
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-6 w-6 text-indigo-600" />
+            <h1 className="text-3xl font-bold text-foreground">Productivity Tracker</h1>
+          </div>
           <p className="mt-2 text-muted-foreground">Track and manage your daily work activities</p>
         </div>
       </div>
@@ -557,10 +621,15 @@ export default function ProductivityTrackerPage() {
                     {(["day", "week", "month"] as const).map((mode) => (
                       <Button
                         key={mode}
-                        variant={viewMode === mode ? "default" : "ghost"}
+                        variant="ghost"
                         size="sm"
                         onClick={() => setViewMode(mode)}
-                        className="rounded-none first:rounded-l-lg last:rounded-r-lg"
+                        className="rounded-none first:rounded-l-lg last:rounded-r-lg hover:bg-muted"
+                        style={
+                          viewMode === mode
+                            ? ({ backgroundColor: "var(--primary)", color: "var(--primary-foreground)" } as React.CSSProperties)
+                            : undefined
+                        }
                       >
                         {mode.charAt(0).toUpperCase() + mode.slice(1)}
                       </Button>
@@ -568,119 +637,134 @@ export default function ProductivityTrackerPage() {
                   </div>
                 </div>
 
-                <Dialog open={isNewEntryOpen} onOpenChange={setIsNewEntryOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="h-4 w-4 mr-2" />
-                      New Entry
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Add New Entry</DialogTitle>
-                    </DialogHeader>
-                    <form onSubmit={handleSubmitEntry} className="space-y-4">
-                      <div>
-                        <Label htmlFor="date">Date</Label>
-                        <Input
-                          id="date"
-                          type="date"
-                          value={newEntry.date}
-                          onChange={(e) => setNewEntry({ ...newEntry, date: e.target.value })}
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="activity">Activity</Label>
-                        <Select
-                          value={newEntry.activity}
-                          onValueChange={(
-                            value:
-                              | "Project"
-                              | "Request"
-                              | "Incident"
-                              | "Change"
-                              | "Meeting"
-                              | "Triage"
-                              | "Collaboration"
-                              | "Training"
-                              | "Admin",
-                          ) => setNewEntry({ ...newEntry, activity: value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Project">Project</SelectItem>
-                            <SelectItem value="Request">Request</SelectItem>
-                            <SelectItem value="Incident">Incident</SelectItem>
-                            <SelectItem value="Change">Change</SelectItem>
-                            <SelectItem value="Meeting">Meeting</SelectItem>
-                            <SelectItem value="Triage">Triage</SelectItem>
-                            <SelectItem value="Collaboration">Collaboration</SelectItem>
-                            <SelectItem value="Training">Training</SelectItem>
-                            <SelectItem value="Admin">Admin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="ticket">Ticket (Optional)</Label>
-                        <Input
-                          id="ticket"
-                          value={newEntry.ticket}
-                          onChange={(e) => setNewEntry({ ...newEntry, ticket: e.target.value })}
-                          placeholder="e.g., BOLT-123, INC-001"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="details">Details</Label>
-                        <Textarea
-                          id="details"
-                          value={newEntry.details}
-                          onChange={(e) => setNewEntry({ ...newEntry, details: e.target.value })}
-                          placeholder="Describe what you worked on..."
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="time_worked">Duration (minutes)</Label>
-                        <Input
-                          id="time_worked"
-                          type="number"
-                          min="1"
-                          max="1440"
-                          value={newEntry.time_worked}
-                          onChange={(e) =>
-                            setNewEntry({ ...newEntry, time_worked: Number.parseInt(e.target.value) || 0 })
-                          }
-                          placeholder="e.g., 30, 60, 90"
-                          required
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Duration: {formatDuration(newEntry.time_worked || 0)}
-                        </p>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="notes">Notes (Optional)</Label>
-                        <Textarea
-                          id="notes"
-                          value={newEntry.notes}
-                          onChange={(e) => setNewEntry({ ...newEntry, notes: e.target.value })}
-                          placeholder="Additional notes..."
-                        />
-                      </div>
-
-                      <Button type="submit" className="w-full">
-                        Save Entry
+                <div className="ml-auto flex items-center gap-2">
+                  <Dialog open={isNewEntryOpen} onOpenChange={setIsNewEntryOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="!border-indigo-200 !text-indigo-600 hover:!bg-indigo-50 dark:!border-indigo-900 dark:!text-indigo-400 dark:hover:!bg-indigo-950/30"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        New Entry
                       </Button>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Add New Entry</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleSubmitEntry} className="space-y-4">
+                        <div>
+                          <Label htmlFor="date">Date</Label>
+                          <Input
+                            id="date"
+                            type="date"
+                            value={newEntry.date}
+                            onChange={(e) => setNewEntry({ ...newEntry, date: e.target.value })}
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="activity">Activity</Label>
+                          <Select
+                            value={newEntry.activity}
+                            onValueChange={(
+                              value:
+                                | "Project"
+                                | "Request"
+                                | "Incident"
+                                | "Change"
+                                | "Meeting"
+                                | "Triage"
+                                | "Collaboration"
+                                | "Training"
+                                | "Admin",
+                            ) => setNewEntry({ ...newEntry, activity: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Project">Project</SelectItem>
+                              <SelectItem value="Request">Request</SelectItem>
+                              <SelectItem value="Incident">Incident</SelectItem>
+                              <SelectItem value="Change">Change</SelectItem>
+                              <SelectItem value="Meeting">Meeting</SelectItem>
+                              <SelectItem value="Triage">Triage</SelectItem>
+                              <SelectItem value="Collaboration">Collaboration</SelectItem>
+                              <SelectItem value="Training">Training</SelectItem>
+                              <SelectItem value="Admin">Admin</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="ticket">Ticket (Optional)</Label>
+                          <Input
+                            id="ticket"
+                            value={newEntry.ticket}
+                            onChange={(e) => setNewEntry({ ...newEntry, ticket: e.target.value })}
+                            placeholder="e.g., BOLT-123, INC-001"
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="details">Details</Label>
+                          <Textarea
+                            id="details"
+                            value={newEntry.details}
+                            onChange={(e) => setNewEntry({ ...newEntry, details: e.target.value })}
+                            placeholder="Describe what you worked on..."
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="time_worked">Duration (minutes)</Label>
+                          <Input
+                            id="time_worked"
+                            type="number"
+                            min="1"
+                            max="1440"
+                            value={newEntry.time_worked}
+                            onChange={(e) =>
+                              setNewEntry({ ...newEntry, time_worked: Number.parseInt(e.target.value) || 0 })
+                            }
+                            placeholder="e.g., 30, 60, 90"
+                            required
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Duration: {formatDuration(newEntry.time_worked || 0)}
+                          </p>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="notes">Notes (Optional)</Label>
+                          <Textarea
+                            id="notes"
+                            value={newEntry.notes}
+                            onChange={(e) => setNewEntry({ ...newEntry, notes: e.target.value })}
+                            placeholder="Additional notes..."
+                          />
+                        </div>
+
+                        <Button type="submit" className="w-full">
+                          Save Entry
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={exportEntriesToCsv}
+                    className="!border-indigo-200 !text-indigo-600 hover:!bg-indigo-50 dark:!border-indigo-900 dark:!text-indigo-400 dark:hover:!bg-indigo-950/30"
+                  >
+                    <Download className="h-4 w-4 mr-2" /> Export CSV
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -704,8 +788,8 @@ export default function ProductivityTrackerPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                    <Ticket className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg">
+                    <Ticket className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Ticket Count</p>
