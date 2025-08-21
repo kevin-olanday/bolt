@@ -19,8 +19,8 @@ import {
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useEffect, useState } from "react"
-import { moduleRegistry } from "@/lib/modules"
-import type { Module } from "@/lib/modules/types"
+import { getModuleConfig, type ModuleConfig } from "@/lib/modules"
+import type { Module } from "@/lib/modules"
 
 const upliftingMessages = [
   "What will you build today?",
@@ -159,14 +159,14 @@ export default function Dashboard() {
   const handleCardClick = (module: Module) => {
     console.log(`[v0] ${module.title} card clicked`)
 
-    const moduleConfig = moduleRegistry[module.name]
-    if (moduleConfig?.onClick) {
-      moduleConfig.onClick()
+    const moduleConfig = getModuleConfig(module.name)
+    if (moduleConfig?.path) {
+      window.location.href = moduleConfig.path
     }
   }
 
-  const getModuleConfig = (moduleName: string) => {
-    return moduleRegistry[moduleName]
+  const getModuleConfigFromRegistry = (moduleName: string) => {
+    return getModuleConfig(moduleName)
   }
 
   const getUserName = () => {
@@ -206,7 +206,7 @@ export default function Dashboard() {
                   <div key={i} className="h-40 bg-[#E2E8F0] dark:bg-slate-800 rounded-lg animate-pulse" />
                 ))
               : modules.map((module) => {
-                  const moduleConfig = getModuleConfig(module.name)
+                  const moduleConfig = getModuleConfigFromRegistry(module.name)
                   const IconComponent = getIconComponent(module.icon)
                   const hasAccess = hasModuleAccess(module)
                   const isEnabled = module.status === "active" && hasAccess
@@ -222,7 +222,7 @@ export default function Dashboard() {
                       isHero={moduleConfig?.isHero && isEnabled}
                       hasAccess={hasAccess}
                       userRole={currentUserRole}
-                      requiredRoles={module.visible_to_roles}
+                      requiredRoles={module.visible_to_roles || undefined}
                       onClick={isEnabled ? () => handleCardClick(module) : undefined}
                     />
                   )
