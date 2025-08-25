@@ -218,6 +218,7 @@ export default function BizOpsAppListPage() {
       console.error("Error fetching apps:", error)
     } finally {
       setIsRefreshing(false)
+      setIsInitialLoading(false) // Set initial loading to false after first fetch
     }
   }
 
