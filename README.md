@@ -1,4 +1,4 @@
-## BOLT – Business Operations Launchpad and Toolkit
+## theBASE – BizOps Apps and Services Ecosystem
 
 A Next.js 15 web app that serves as a BizOps dashboard and toolkit. It surfaces quick links and operational modules with role‑based visibility, plus a built‑in productivity tracker.
 

@@ -29,7 +29,7 @@ CREATE POLICY "Allow all operations on productivity_entries" ON public.productiv
 -- Insert comprehensive dummy data for testing daily, weekly, monthly views
 INSERT INTO public.productivity_entries (date, time_worked, work_mode, task_description, project, notes) VALUES
     -- Today's entries
-    (CURRENT_DATE, 90, 'Focus', 'Code review and bug fixes', 'BOLT Dashboard', 'Fixed responsive layout issues'),
+    (CURRENT_DATE, 90, 'Focus', 'Code review and bug fixes', 'The BASE Dashboard', 'Fixed responsive layout issues'),
     (CURRENT_DATE, 75, 'Collaboration', 'Team standup and planning', 'Sprint Planning', 'Discussed Q1 priorities'),
     (CURRENT_DATE, 90, 'Learning', 'React performance optimization', 'Professional Development', 'Studied React.memo and useMemo'),
     (CURRENT_DATE, 45, 'Admin', 'Email and administrative tasks', 'Management', 'Processed team requests'),
@@ -37,7 +37,7 @@ INSERT INTO public.productivity_entries (date, time_worked, work_mode, task_desc
     -- Yesterday's entries
     (CURRENT_DATE - 1, 90, 'Focus', 'Database schema design', 'User Management', 'Designed user roles table'),
     (CURRENT_DATE - 1, 75, 'Admin', 'Weekly reports preparation', 'Management', 'Compiled team metrics'),
-    (CURRENT_DATE - 1, 120, 'Focus', 'Feature development', 'BOLT Dashboard', 'Implemented dark mode toggle'),
+    (CURRENT_DATE - 1, 120, 'Focus', 'Feature development', 'The BASE Dashboard', 'Implemented dark mode toggle'),
     (CURRENT_DATE - 1, 30, 'Break', 'Team coffee break', 'Social', 'Discussed weekend plans'),
     
     -- 2 days ago
@@ -46,14 +46,14 @@ INSERT INTO public.productivity_entries (date, time_worked, work_mode, task_desc
     (CURRENT_DATE - 2, 45, 'Learning', 'TypeScript advanced patterns', 'Professional Development', 'Generic constraints and mapped types'),
     
     -- 3 days ago
-    (CURRENT_DATE - 3, 120, 'Focus', 'Frontend component refactoring', 'BOLT Dashboard', 'Modularized dashboard cards'),
+    (CURRENT_DATE - 3, 120, 'Focus', 'Frontend component refactoring', 'The BASE Dashboard', 'Modularized dashboard cards'),
     (CURRENT_DATE - 3, 90, 'Collaboration', 'Code review session', 'Team Activity', 'Reviewed 3 pull requests'),
     (CURRENT_DATE - 3, 30, 'Admin', 'Sprint retrospective', 'Management', 'Action items documented'),
     
     -- Last week entries (7-10 days ago)
     (CURRENT_DATE - 7, 105, 'Focus', 'Database optimization', 'Performance Project', 'Optimized query performance'),
     (CURRENT_DATE - 7, 60, 'Learning', 'PostgreSQL indexing strategies', 'Professional Development', 'B-tree vs GIN indexes'),
-    (CURRENT_DATE - 8, 90, 'Focus', 'UI/UX improvements', 'BOLT Dashboard', 'Enhanced user experience'),
+    (CURRENT_DATE - 8, 90, 'Focus', 'UI/UX improvements', 'The BASE Dashboard', 'Enhanced user experience'),
     (CURRENT_DATE - 8, 75, 'Collaboration', 'Design review meeting', 'Project Beta', 'Approved mockups'),
     (CURRENT_DATE - 9, 120, 'Focus', 'Integration testing', 'Quality Assurance', 'End-to-end test suite'),
     (CURRENT_DATE - 10, 90, 'Admin', 'Team planning session', 'Management', 'Q2 roadmap discussion'),

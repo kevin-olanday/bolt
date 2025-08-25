@@ -26,6 +26,7 @@ import {
   Coffee,
   Umbrella,
   BarChart3,
+  Zap,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -109,9 +110,104 @@ const attendanceHexColors = {
   "Off Day": "#E5E7EB",
 }
 
+// Loading component that will be shown while the page loads
+function AttendanceLoading() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-indigo-700 via-indigo-800 to-indigo-900 border-b-2 border-indigo-500/30 shadow-xl">
+        <div className="max-w-screen-xl mx-auto px-8 py-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-indigo-500/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-indigo-400/30">
+                <Calendar className="h-5 w-5 text-indigo-300" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-2xl font-extrabold tracking-tight text-white leading-none">
+                  Attendance
+                </h1>
+                <p className="text-sm text-indigo-200 leading-none tracking-wider uppercase mt-1">
+                  Track daily attendance and leave management
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Loading Content */}
+      <div className="max-w-screen-xl mx-auto px-8 py-16">
+        <div className="text-center">
+          {/* Loading Animation */}
+          <div className="relative mb-8">
+            {/* Central Loading Icon */}
+            <div className="relative w-24 h-24 mx-auto mb-6">
+              {/* Outer Ring */}
+              <div className="absolute inset-0 border-4 border-indigo-200/30 rounded-full animate-pulse" />
+              
+              {/* Spinning Ring */}
+              <div className="absolute inset-2 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin" />
+              
+              {/* Central Icon */}
+              <div className="absolute inset-4 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                <Users className="h-8 w-8 text-white" />
+              </div>
+              
+              {/* Floating Attendance Elements */}
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center animate-bounce">
+                <Clock className="h-3 w-3 text-white" />
+              </div>
+              <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '0.5s' }}>
+                <Zap className="h-3 w-3 text-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* Loading Text */}
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-200">
+              Loading Attendance System
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Synchronizing team data and preparing attendance dashboard...
+            </p>
+          </div>
+
+          {/* Progress Indicators */}
+          <div className="mt-12 max-w-md mx-auto space-y-4">
+            {/* Team Sync */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Team roster synchronization</span>
+            </div>
+            
+            {/* Attendance Data */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Attendance records loading</span>
+            </div>
+            
+            {/* Leave Management */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }} />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Leave management system ready</span>
+            </div>
+          </div>
+
+          {/* Branding */}
+          <div className="mt-16 pt-8 border-t border-slate-200/50 dark:border-slate-700/50">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Powered by <span className="font-semibold text-indigo-600 dark:text-indigo-400">The BASE</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function AttendancePage() {
   const [entries, setEntries] = useState<AttendanceEntry[]>([])
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
@@ -121,6 +217,8 @@ export default function AttendancePage() {
   const [tableExists, setTableExists] = useState<boolean | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState<string>("all")
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const [newEntry, setNewEntry] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -167,7 +265,7 @@ export default function AttendancePage() {
       setTableExists(false)
       setError("Unable to connect to database. Please check your configuration.")
     } finally {
-      setLoading(false)
+      setIsInitialLoading(false)
     }
   }
 
@@ -175,7 +273,7 @@ export default function AttendancePage() {
     if (!tableExists) return
 
     try {
-      setLoading(true)
+      setIsRefreshing(true)
       setError(null)
       console.log("[v0] Fetching attendance entries for month")
       const supabase = getSupabaseClient()
@@ -198,15 +296,10 @@ export default function AttendancePage() {
       console.log("[v0] Successfully fetched", data?.length || 0, "entries")
       setEntries(data || [])
     } catch (error) {
-      console.error("Error fetching entries:", error)
-      if (error instanceof Error && error.message.includes("Could not find the table")) {
-        setTableExists(false)
-        setError("Database table not found. Please run the setup script to create the attendance table.")
-      } else {
-        setError(`Failed to load attendance entries: ${error instanceof Error ? error.message : "Unknown error"}`)
-      }
+      console.error("[v0] Error fetching entries:", error)
+      setError("Failed to fetch attendance data. Please try again.")
     } finally {
-      setLoading(false)
+      setIsRefreshing(false)
     }
   }
 
@@ -529,15 +622,9 @@ export default function AttendancePage() {
 
   const stats = getStats()
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <TopNav />
-        <div className="max-w-screen-xl mx-auto px-8 py-8">
-          <div className="text-center py-8">Loading attendance module...</div>
-        </div>
-      </div>
-    )
+  // Show loading component only for initial page load
+  if (isInitialLoading) {
+    return <AttendanceLoading />
   }
 
   return (
@@ -597,9 +684,14 @@ export default function AttendancePage() {
                   <ChevronLeft className="h-5 w-5" />
                 </Button>
                 
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                  </h2>
+                  {isRefreshing && (
+                    <div className="w-4 h-4 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin" />
+                  )}
+                </div>
                 
                 <Button
                   variant="outline"

@@ -37,7 +37,7 @@ CREATE POLICY "Users can delete their own productivity entries" ON productivity_
 
 -- Insert sample data
 INSERT INTO productivity_entries (user_id, entry_date, work_mode, activity_type, ticket_id, details, duration_hours, duration_minutes, notes) VALUES
-  (gen_random_uuid(), CURRENT_DATE, 'WFH', 'Development', 'BOLT-123', 'Implemented user authentication system', 4, 30, 'Completed ahead of schedule'),
+  (gen_random_uuid(), CURRENT_DATE, 'WFH', 'Development', 'BASE-123', 'Implemented user authentication system', 4, 30, 'Completed ahead of schedule'),
   (gen_random_uuid(), CURRENT_DATE, 'WFO', 'Meeting', NULL, 'Sprint planning and retrospective', 2, 0, 'Good team alignment'),
-  (gen_random_uuid(), CURRENT_DATE - 1, 'WFH', 'Bug Fix', 'BOLT-124', 'Fixed login redirect issue', 1, 45, 'Required database migration'),
+  (gen_random_uuid(), CURRENT_DATE - 1, 'WFH', 'Bug Fix', 'BASE-124', 'Fixed login redirect issue', 1, 45, 'Required database migration'),
   (gen_random_uuid(), CURRENT_DATE - 1, 'Leave', 'Sick Leave', NULL, 'Personal health day', 8, 0, 'Doctor appointment');

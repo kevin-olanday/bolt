@@ -3,7 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Updated color scheme to use indigo primary and emerald accent for BOLT branding */
+/* Updated color scheme to use indigo primary and emerald accent for The BASE branding */
 :root {
   --background: oklch(0.99 0.005 258.34); /* #f9fafb warm gray background */
   --foreground: oklch(0.35 0.01 258.34); /* #475569 */
@@ -124,7 +124,7 @@
 }
 
 @layer utilities {
-  /* Updated gradient text to use BOLT indigo and emerald colors */
+  /* Updated gradient text to use The BASE indigo and emerald colors */
   .gradient-text {
     @apply bg-gradient-to-r from-indigo-500 via-emerald-500 to-indigo-600 bg-clip-text text-transparent;
   }
@@ -137,7 +137,7 @@
     @apply bg-gray-900/80 border-gray-700/20;
   }
 
-  /* Updated animated gradient to use BOLT brand colors */
+  /* Updated animated gradient to use The BASE brand colors */
   .animated-gradient {
     background: linear-gradient(-45deg, #4f46e5, #6366f1, #10b981, #059669);
     background-size: 400% 400%;
@@ -164,7 +164,7 @@
     @apply -translate-y-1 shadow-lg;
   }
 
-  /* Updated pulse glow to use indigo color for BOLT branding */
+  /* Updated pulse glow to use indigo color for The BASE branding */
   .pulse-glow {
     @apply animate-pulse;
     box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);

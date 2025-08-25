@@ -1,7 +1,26 @@
 "use client"
 
+import type React from "react"
 import { useState, useEffect } from "react"
-import { FileText, ArrowLeft, Plus, Copy, Trash2, Eye, Download, Search, Filter, Clock, User, Lock, Globe, EyeOff, Key, Flame } from "lucide-react"
+import {
+  ArrowLeft,
+  FileText,
+  Plus,
+  Copy,
+  Download,
+  Eye,
+  EyeOff,
+  Lock,
+  Clock,
+  Calendar,
+  Trash2,
+  Edit,
+  Search,
+  Filter,
+  FileLock,
+  Shield,
+  Zap,
+} from "lucide-react"
 import hljs from "highlight.js"
 import "highlight.js/styles/github-dark.css"
 import CryptoJS from "crypto-js"
@@ -78,7 +97,7 @@ const expirationOptions = [
 ]
 
 const visibilityOptions = [
-  { value: "public", label: "Public", icon: Globe, description: "Anyone can view" },
+  { value: "public", label: "Public", icon: Shield, description: "Anyone can view" },
   { value: "unlisted", label: "Unlisted", icon: Eye, description: "Only those with the link can view" },
   { value: "private", label: "Private", icon: Lock, description: "Only you can view" }
 ]
@@ -105,12 +124,109 @@ const decryptContent = (encryptedContent: string, key: string): string => {
   }
 }
 
+// Loading component that will be shown while the page loads
+function SafePasteLoading() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-indigo-700 via-indigo-800 to-indigo-900 border-b-2 border-indigo-500/30 shadow-xl">
+        <div className="max-w-screen-xl mx-auto px-8 py-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-indigo-500/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-indigo-400/30">
+                <FileLock className="h-5 w-5 text-indigo-300" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-2xl font-extrabold tracking-tight text-white leading-none">
+                  Safe Paste
+                </h1>
+                <p className="text-sm text-indigo-200 leading-none tracking-wider uppercase mt-1">
+                  Securely share text snippets and code
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Loading Content */}
+      <div className="max-w-screen-xl mx-auto px-8 py-16">
+        <div className="text-center">
+          {/* Loading Animation */}
+          <div className="relative mb-8">
+            {/* Central Loading Icon */}
+            <div className="relative w-24 h-24 mx-auto mb-6">
+              {/* Outer Ring */}
+              <div className="absolute inset-0 border-4 border-indigo-200/30 rounded-full animate-pulse" />
+              
+              {/* Spinning Ring */}
+              <div className="absolute inset-2 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin" />
+              
+              {/* Central Icon */}
+              <div className="absolute inset-4 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                <Shield className="h-8 w-8 text-white" />
+              </div>
+              
+              {/* Floating Security Elements */}
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center animate-bounce">
+                <Lock className="h-3 w-3 text-white" />
+              </div>
+              <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '0.5s' }}>
+                <Zap className="h-3 w-3 text-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* Loading Text */}
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-200">
+              Initializing Safe Paste
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Securing your environment and preparing encryption protocols...
+            </p>
+          </div>
+
+          {/* Progress Indicators */}
+          <div className="mt-12 max-w-md mx-auto space-y-4">
+            {/* Security Check */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Security protocols verified</span>
+            </div>
+            
+            {/* Encryption Setup */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Encryption engine initializing</span>
+            </div>
+            
+            {/* Access Control */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }} />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Access control systems loading</span>
+            </div>
+          </div>
+
+          {/* Branding */}
+          <div className="mt-16 pt-8 border-t border-slate-200/50 dark:border-slate-700/50">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Powered by <span className="font-semibold text-indigo-600 dark:text-indigo-400">The BASE</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function SafePastePage() {
   const [pastes, setPastes] = useState<PasteEntry[]>([])
-  const [loading, setLoading] = useState(true)
   const [copySuccess, setCopySuccess] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"editor" | "preview">("editor")
   const [createdPasteUrl, setCreatedPasteUrl] = useState<string | null>(null)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   // Form state
   const [newPaste, setNewPaste] = useState({
@@ -130,9 +246,11 @@ export default function SafePastePage() {
     fetchPastes()
   }, [])
 
+
+
   const fetchPastes = async () => {
     try {
-      setLoading(true)
+      setIsRefreshing(true)
       const { data, error } = await supabase
         .from("safe_pastes")
         .select("*")
@@ -147,8 +265,14 @@ export default function SafePastePage() {
     } catch (error) {
       console.error("Error fetching pastes:", error)
     } finally {
-      setLoading(false)
+      setIsRefreshing(false)
+      setIsInitialLoading(false) // Set initial loading to false after first fetch
     }
+  }
+
+  // Show loading component only for initial page load
+  if (isInitialLoading) {
+    return <SafePasteLoading />
   }
 
   const handleCreatePaste = async (e: React.FormEvent) => {
@@ -259,7 +383,7 @@ export default function SafePastePage() {
 
   const getVisibilityIcon = (visibility: string) => {
     const option = visibilityOptions.find(v => v.value === visibility)
-    const IconComponent = option?.icon || Globe
+    const IconComponent = option?.icon || Shield
     return <IconComponent className="h-4 w-4" />
   }
 
@@ -399,36 +523,6 @@ export default function SafePastePage() {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background dark:bg-slate-900 flex flex-col">
-        <TopNav />
-        <div className="flex-1">
-          <div className="bg-slate-50 dark:bg-slate-800/50 border-b border-border">
-            <div className="max-w-screen-xl mx-auto px-8 py-6">
-              <div className="flex items-center gap-3">
-                <Link href="/" className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                  <ArrowLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                </Link>
-                <div className="flex items-center gap-2">
-                  <FileText className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-                  <h1 className="text-3xl font-bold text-foreground">Safe Paste</h1>
-                </div>
-              </div>
-              <p className="mt-2 text-muted-foreground">Securely share text snippets and code</p>
-            </div>
-          </div>
-          <div className="max-w-screen-xl mx-auto px-8 py-8">
-            <div className="flex items-center justify-center h-64">
-              <div className="text-lg">Loading Safe Paste...</div>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    )
   }
 
   return (

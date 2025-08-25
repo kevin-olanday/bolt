@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import {
   ChevronLeft,
   ChevronRight,
@@ -18,6 +18,7 @@ import {
   Zap,
   BarChart3,
   Download,
+  TrendingUp,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -78,10 +79,105 @@ const chartColors = {
   Admin: "#6b7280", // gray
 }
 
+// Loading component that will be shown while the page loads
+function ProductivityTrackerLoading() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-indigo-700 via-indigo-800 to-indigo-900 border-b-2 border-indigo-500/30 shadow-xl">
+        <div className="max-w-screen-xl mx-auto px-8 py-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-indigo-500/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-indigo-400/30">
+                <BarChart3 className="h-5 w-5 text-indigo-300" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-2xl font-extrabold tracking-tight text-white leading-none">
+                  Productivity Tracker
+                </h1>
+                <p className="text-sm text-indigo-200 leading-none tracking-wider uppercase mt-1">
+                  Track daily metrics and performance
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Loading Content */}
+      <div className="max-w-screen-xl mx-auto px-8 py-16">
+        <div className="text-center">
+          {/* Loading Animation */}
+          <div className="relative mb-8">
+            {/* Central Loading Icon */}
+            <div className="relative w-24 h-24 mx-auto mb-6">
+              {/* Outer Ring */}
+              <div className="absolute inset-0 border-4 border-indigo-200/30 rounded-full animate-pulse" />
+              
+              {/* Spinning Ring */}
+              <div className="absolute inset-2 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin" />
+              
+              {/* Central Icon */}
+              <div className="absolute inset-4 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                <TrendingUp className="h-8 w-8 text-white" />
+              </div>
+              
+              {/* Floating Productivity Elements */}
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center animate-bounce">
+                <Clock className="h-3 w-3 text-white" />
+              </div>
+              <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '0.5s' }}>
+                <Zap className="h-3 w-3 text-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* Loading Text */}
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-200">
+              Loading Productivity Dashboard
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Analyzing performance data and preparing insights...
+            </p>
+          </div>
+
+          {/* Progress Indicators */}
+          <div className="mt-12 max-w-md mx-auto space-y-4">
+            {/* Data Processing */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Processing time tracking data</span>
+            </div>
+            
+            {/* Analytics Engine */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Analytics engine initializing</span>
+            </div>
+            
+            {/* Dashboard Rendering */}
+            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }} />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Dashboard components loading</span>
+            </div>
+          </div>
+
+          {/* Branding */}
+          <div className="mt-16 pt-8 border-t border-slate-200/50 dark:border-slate-700/50">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Powered by <span className="font-semibold text-indigo-600 dark:text-indigo-400">The BASE</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ProductivityTrackerPage() {
   const [entries, setEntries] = useState<ProductivityEntry[]>([])
   const [filteredEntries, setFilteredEntries] = useState<ProductivityEntry[]>([])
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
   const [viewMode, setViewMode] = useState<"day" | "week" | "month">("day")
@@ -94,6 +190,8 @@ export default function ProductivityTrackerPage() {
   const [sortField, setSortField] = useState<keyof ProductivityEntry>("date")
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
   const [tableExists, setTableExists] = useState<boolean | null>(null)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const [newEntry, setNewEntry] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -156,7 +254,7 @@ export default function ProductivityTrackerPage() {
       setTableExists(false)
       setError("Unable to connect to database. Please check your configuration.")
     } finally {
-      setLoading(false)
+      setIsInitialLoading(false)
     }
   }
 
@@ -164,7 +262,7 @@ export default function ProductivityTrackerPage() {
     if (!tableExists) return
 
     try {
-      setLoading(true)
+      setIsRefreshing(true)
       setError(null)
       console.log("[v0] Fetching entries for", viewMode, selectedDate)
       const supabase = getSupabaseClient()
@@ -178,48 +276,36 @@ export default function ProductivityTrackerPage() {
         startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
         const endOfWeek = new Date(startOfWeek)
         endOfWeek.setDate(endOfWeek.getDate() + 6)
-
-        query = query
-          .gte("date", startOfWeek.toISOString().split("T")[0])
-          .lte("date", endOfWeek.toISOString().split("T")[0])
+        query = query.gte("date", startOfWeek.toISOString().split("T")[0]).lte("date", endOfWeek.toISOString().split("T")[0])
       } else if (viewMode === "month") {
         const startOfMonth = new Date(selectedDate)
         startOfMonth.setDate(1)
         const endOfMonth = new Date(startOfMonth)
         endOfMonth.setMonth(endOfMonth.getMonth() + 1)
         endOfMonth.setDate(0)
-
-        query = query
-          .gte("date", startOfMonth.toISOString().split("T")[0])
-          .lte("date", endOfMonth.toISOString().split("T")[0])
+        query = query.gte("date", startOfMonth.toISOString().split("T")[0]).lte("date", endOfMonth.toISOString().split("T")[0])
       }
 
       const { data, error } = await query.order("date", { ascending: false })
 
       if (error) {
         console.error("[v0] Database error:", error)
-        if (error.message.includes("infinite recursion")) {
-          throw new Error("RLS policy recursion detected. Please run the RLS fix script.")
+        if (error instanceof Error && error.message.includes("infinite recursion")) {
+          setError(
+            "Database policy error detected. Please run the RLS fix script (scripts/033_fix_rls_policies_properly.sql) to resolve this issue.",
+          )
+        } else {
+          setError(`Failed to load productivity entries: ${error instanceof Error ? error.message : "Unknown error"}`)
         }
-        throw error
-      }
-
-      console.log("[v0] Successfully fetched", data?.length || 0, "entries")
-      setEntries(data || [])
-    } catch (error) {
-      console.error("Error fetching entries:", error)
-      if (error instanceof Error && error.message.includes("Could not find the table")) {
-        setTableExists(false)
-        setError("Database table not found. Please run the setup script to create the productivity_entries table.")
-      } else if (error instanceof Error && error.message.includes("infinite recursion")) {
-        setError(
-          "Database policy error detected. Please run the RLS fix script (scripts/033_fix_rls_policies_properly.sql) to resolve this issue.",
-        )
       } else {
-        setError(`Failed to load productivity entries: ${error instanceof Error ? error.message : "Unknown error"}`)
+        console.log("[v0] Successfully fetched", data?.length || 0, "entries")
+        setEntries(data || [])
       }
+    } catch (error) {
+      console.error("[v0] Error fetching entries:", error)
+      setError("Failed to fetch productivity data. Please try again.")
     } finally {
-      setLoading(false)
+      setIsRefreshing(false)
     }
   }
 
@@ -474,6 +560,11 @@ export default function ProductivityTrackerPage() {
 
   const stats = calculateStats()
 
+  // Show loading component only for initial page load
+  if (isInitialLoading) {
+    return <ProductivityTrackerLoading />
+  }
+
   if (tableExists === false) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -540,7 +631,7 @@ export default function ProductivityTrackerPage() {
                 <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg">
                   <Zap className="h-3 w-3 text-white" />
                 </div>
-                <span className="text-sm font-medium text-muted-foreground">© 2024 BOLT. All rights reserved.</span>
+                <span className="text-sm font-medium text-muted-foreground">© 2024 The BASE. All rights reserved.</span>
               </div>
               <div className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
                 <a href="#" className="hover:text-foreground transition-colors hover:underline">
@@ -664,7 +755,7 @@ export default function ProductivityTrackerPage() {
                           id="ticket"
                           value={newEntry.ticket}
                           onChange={(e) => setNewEntry({ ...newEntry, ticket: e.target.value })}
-                          placeholder="e.g., BOLT-123, INC-001"
+                          placeholder="e.g., BASE-123, INC-001"
                         />
                       </div>
 
@@ -896,9 +987,7 @@ export default function ProductivityTrackerPage() {
               <CardTitle>Productivity Entries</CardTitle>
             </CardHeader>
             <CardContent>
-              {loading ? (
-                <div className="text-center py-8">Loading entries...</div>
-              ) : error ? (
+              {error ? (
                 <div className="text-center py-8">
                   <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -1052,7 +1141,7 @@ export default function ProductivityTrackerPage() {
                   id="edit-ticket"
                   value={editingEntry.ticket || ""}
                   onChange={(e) => setEditingEntry({ ...editingEntry, ticket: e.target.value })}
-                  placeholder="e.g., BOLT-123, INC-001"
+                                      placeholder="e.g., BASE-123, INC-001"
                 />
               </div>
 

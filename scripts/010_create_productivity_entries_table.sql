@@ -26,7 +26,7 @@ CREATE POLICY IF NOT EXISTS "Allow all operations on productivity_entries" ON pu
 
 -- Insert sample data
 INSERT INTO public.productivity_entries (date, start_time, end_time, work_mode, task_description, project, notes) VALUES
-    (CURRENT_DATE, '09:00', '10:30', 'Focus', 'Code review and bug fixes', 'BOLT Dashboard', 'Fixed responsive layout issues'),
+    (CURRENT_DATE, '09:00', '10:30', 'Focus', 'Code review and bug fixes', 'The BASE Dashboard', 'Fixed responsive layout issues'),
     (CURRENT_DATE, '10:45', '12:00', 'Collaboration', 'Team standup and planning', 'Sprint Planning', 'Discussed Q1 priorities'),
     (CURRENT_DATE, '13:00', '14:30', 'Learning', 'React performance optimization', 'Professional Development', 'Studied React.memo and useMemo'),
     (CURRENT_DATE - 1, '09:30', '11:00', 'Focus', 'Database schema design', 'User Management', 'Designed user roles table'),

@@ -29,7 +29,7 @@ CREATE POLICY "Allow all operations on productivity_entries" ON public.productiv
 -- Insert comprehensive dummy data for testing daily, weekly, monthly views
 INSERT INTO public.productivity_entries (date, activity, ticket, details, time_worked, notes) VALUES
     -- Today's entries
-    (CURRENT_DATE, 'Project', 'BOLT-123', 'Code review and bug fixes for dashboard', 90, 'Fixed responsive layout issues'),
+    (CURRENT_DATE, 'Project', 'BASE-123', 'Code review and bug fixes for dashboard', 90, 'Fixed responsive layout issues'),
     (CURRENT_DATE, 'Meeting', NULL, 'Team standup and sprint planning', 75, 'Discussed Q1 priorities'),
     (CURRENT_DATE, 'Training', NULL, 'React performance optimization study', 90, 'Studied React.memo and useMemo'),
     (CURRENT_DATE, 'Admin', NULL, 'Email and administrative tasks', 45, 'Processed team requests'),
@@ -37,7 +37,7 @@ INSERT INTO public.productivity_entries (date, activity, ticket, details, time_w
     -- Yesterday's entries
     (CURRENT_DATE - 1, 'Project', 'USER-456', 'Database schema design for user management', 90, 'Designed user roles table'),
     (CURRENT_DATE - 1, 'Admin', NULL, 'Weekly reports preparation', 75, 'Compiled team metrics'),
-    (CURRENT_DATE - 1, 'Project', 'BOLT-124', 'Dark mode toggle implementation', 120, 'Implemented theme switching'),
+    (CURRENT_DATE - 1, 'Project', 'BASE-124', 'Dark mode toggle implementation', 120, 'Implemented theme switching'),
     (CURRENT_DATE - 1, 'Collaboration', NULL, 'Team coffee break and informal discussion', 30, 'Discussed weekend plans'),
     
     -- 2 days ago
@@ -46,14 +46,14 @@ INSERT INTO public.productivity_entries (date, activity, ticket, details, time_w
     (CURRENT_DATE - 2, 'Training', NULL, 'TypeScript advanced patterns', 45, 'Generic constraints and mapped types'),
     
     -- 3 days ago
-    (CURRENT_DATE - 3, 'Project', 'BOLT-125', 'Frontend component refactoring', 120, 'Modularized dashboard cards'),
+    (CURRENT_DATE - 3, 'Project', 'BASE-125', 'Frontend component refactoring', 120, 'Modularized dashboard cards'),
     (CURRENT_DATE - 3, 'Collaboration', NULL, 'Code review session with team', 90, 'Reviewed 3 pull requests'),
     (CURRENT_DATE - 3, 'Admin', NULL, 'Sprint retrospective meeting', 30, 'Action items documented'),
     
     -- Last week entries (7-10 days ago)
     (CURRENT_DATE - 7, 'Project', 'PERF-101', 'Database optimization work', 105, 'Optimized query performance'),
     (CURRENT_DATE - 7, 'Training', NULL, 'PostgreSQL indexing strategies', 60, 'B-tree vs GIN indexes'),
-    (CURRENT_DATE - 8, 'Project', 'BOLT-126', 'UI/UX improvements implementation', 90, 'Enhanced user experience'),
+    (CURRENT_DATE - 8, 'Project', 'BASE-126', 'UI/UX improvements implementation', 90, 'Enhanced user experience'),
     (CURRENT_DATE - 8, 'Meeting', NULL, 'Design review meeting', 75, 'Approved mockups'),
     (CURRENT_DATE - 9, 'Project', 'QA-202', 'Integration testing setup', 120, 'End-to-end test suite'),
     (CURRENT_DATE - 10, 'Admin', NULL, 'Team planning session', 90, 'Q2 roadmap discussion'),
