@@ -1,5 +1,4 @@
 "use client"
-import { Button } from "@/components/ui/button"
 import {
   Globe,
   Shield,
@@ -9,8 +8,6 @@ import {
   Bug,
   TriangleIcon as Trident,
   BarChart3,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
@@ -46,7 +43,6 @@ const colorMap: Record<string, string> = {
 }
 
 export function QuickLinksHorizontal() {
-  const [isExpanded, setIsExpanded] = useState(true)
   const [quickLinks, setQuickLinks] = useState<QuickLink[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -77,68 +73,37 @@ export function QuickLinksHorizontal() {
 
   if (error) {
     return (
-      <div className="bg-white dark:bg-card rounded-lg shadow-sm border p-6 mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-foreground">Quick Links</h2>
-        </div>
-        <div className="text-center py-8 text-muted-foreground">
-          <p>{error}</p>
-          <p className="text-sm mt-2">Please check your database connection.</p>
-        </div>
+      <div className="text-center py-8 text-muted-foreground">
+        <p>{error}</p>
+        <p className="text-sm mt-2">Please check your database connection.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white dark:bg-card rounded-lg shadow-sm border p-6 mb-8">
-      <div className="flex items-center justify-between mb-4">
-        <Button
-          variant="ghost"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-2 p-0 h-auto hover:bg-transparent"
-        >
-          <h2 className="text-lg font-semibold text-foreground">Quick Links</h2>
-          {isExpanded ? (
-            <ChevronUp className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-          )}
-        </Button>
-        {/* <Button variant="outline" size="sm">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Link
-        </Button> */}
-      </div>
+    <div className="space-y-2">
+      {loading
+        ? Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-10 bg-muted/20 rounded-lg animate-pulse" />
+          ))
+        : quickLinks.map((link) => {
+            const IconComponent = iconMap[link.icon] || Globe
+            const colorClass =
+              colorMap[link.category] || "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
 
-      {isExpanded && (
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
-          {loading
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="flex-shrink-0 h-20 w-[130px] bg-muted/20 rounded-lg animate-pulse" />
-              ))
-            : quickLinks.map((link) => {
-                const IconComponent = iconMap[link.icon] || Globe
-                const colorClass =
-                  colorMap[link.category] || "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-
-                return (
-                  <Button
-                    key={link.id}
-                    variant="ghost"
-                    className={`flex-shrink-0 h-auto p-3 flex flex-col items-center gap-2 min-w-[130px] hover:scale-105 transition-transform ${colorClass}`}
-                    asChild
-                  >
-                    <a href={link.url}>
-                      <IconComponent className="h-5 w-5" />
-                      <span className="text-xs font-medium text-center leading-tight whitespace-normal">
-                        {link.title}
-                      </span>
-                    </a>
-                  </Button>
-                )
-              })}
-        </div>
-      )}
+            return (
+              <a
+                key={link.id}
+                href={link.url}
+                className={`block p-3 flex items-center gap-3 hover:scale-[1.02] transition-transform cursor-pointer rounded-lg ${colorClass}`}
+              >
+                <IconComponent className="h-4 w-4 flex-shrink-0" />
+                <span className="text-sm font-medium leading-tight whitespace-nowrap">
+                  {link.title}
+                </span>
+              </a>
+            )
+          })}
     </div>
   )
 }

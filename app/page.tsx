@@ -218,43 +218,113 @@ export default function Dashboard() {
       </div>
 
       <main className="flex-1">
-        <div className="max-w-screen-xl mx-auto px-8 py-8 bg-[#F1F5F9] dark:bg-slate-900 mt-6">
-          <QuickLinksHorizontal />
+        <div className="max-w-screen-xl mx-auto px-8 py-8 bg-[#F1F5F9] dark:bg-slate-900 mt-6 rounded-lg">
+          <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
+            {/* Left Column: Toolkit (Main Content) - Takes up most of the screen */}
+            <div className="xl:col-span-4">
+              {/* Apps and Services Section - Now prominently positioned */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+                    <Wrench className="h-6 w-6 text-[#14B8A6]" />
+                    Apps and Services
+                  </h2>
+                </div>
+              </div>
 
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
-              <Wrench className="h-5 w-5 text-[#14B8A6]" />
-              Toolkit
-            </h2>
-          </div>
+              {/* Apps and Services Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {loading
+                  ? Array.from({ length: 8 }).map((_, i) => (
+                      <div key={i} className="h-40 bg-[#E2E8F0] dark:bg-slate-800 rounded-lg animate-pulse" />
+                    ))
+                  : modules.map((module) => {
+                      const moduleConfig = getModuleConfigFromRegistry(module.name)
+                      const IconComponent = getIconComponent(module.icon)
+                      const hasAccess = hasModuleAccess(module)
+                      const isEnabled = module.status === "active" && hasAccess
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-            {loading
-              ? Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-40 bg-[#E2E8F0] dark:bg-slate-800 rounded-lg animate-pulse" />
-                ))
-              : modules.map((module) => {
-                  const moduleConfig = getModuleConfigFromRegistry(module.name)
-                  const IconComponent = getIconComponent(module.icon)
-                  const hasAccess = hasModuleAccess(module)
-                  const isEnabled = module.status === "active" && hasAccess
+                      return (
+                        <DashboardCard
+                          key={module.id}
+                          title={module.title}
+                          subtitle={module.description}
+                          enabled={isEnabled}
+                          status={module.status}
+                          icon={IconComponent}
+                          isHero={moduleConfig?.isHero && isEnabled}
+                          hasAccess={hasAccess}
+                          userRole={currentUserRole}
+                          requiredRoles={module.visible_to_roles || undefined}
+                          onClick={isEnabled ? () => handleCardClick(module) : undefined}
+                        />
+                      )
+                    })}
+              </div>
+            </div>
 
-                  return (
-                    <DashboardCard
-                      key={module.id}
-                      title={module.title}
-                      subtitle={module.description}
-                      enabled={isEnabled}
-                      status={module.status}
-                      icon={IconComponent}
-                      isHero={moduleConfig?.isHero && isEnabled}
-                      hasAccess={hasAccess}
-                      userRole={currentUserRole}
-                      requiredRoles={module.visible_to_roles || undefined}
-                      onClick={isEnabled ? () => handleCardClick(module) : undefined}
-                    />
-                  )
-                })}
+            {/* Right Column: My Work + Quick Links (Sidebar) */}
+            <div className="xl:col-span-1">
+              <div className="space-y-6">
+                {/* My Work Section */}
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-3">
+                    <Calendar className="h-4 w-4 text-[#4F46E5]" />
+                    My Work
+                  </h2>
+                  <div className="space-y-3">
+                    {/* JIRA Tickets Card */}
+                    <div 
+                      className="bg-white dark:bg-slate-800 rounded-lg p-3 shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-200 cursor-pointer"
+                      onClick={() => window.open('https://your-company.atlassian.net/issues/?filter=assignee=currentUser()', '_blank')}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <MessageSquare className="h-3 w-3 text-[#0052CC]" />
+                          <span className="text-xs font-medium text-slate-700 dark:text-slate-300">JIRA Tickets</span>
+                        </div>
+                      </div>
+                      <div className="text-xl font-bold text-[#4F46E5] hover:text-[#3730A3] transition-colors">
+                        12
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        Assigned to me
+                      </div>
+                    </div>
+
+                    {/* Helix Tickets Card */}
+                    <div 
+                      className="bg-white dark:bg-slate-800 rounded-lg p-3 shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-200 cursor-pointer"
+                      onClick={() => window.open('https://your-helix-system.com/tickets/assigned', '_blank')}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Wrench className="h-3 w-3 text-[#14B8A3]" />
+                          <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Helix Tickets</span>
+                        </div>
+                      </div>
+                      <div className="text-xl font-bold text-[#4F46E5] hover:text-[#3730A3] transition-colors">
+                        5
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        Assigned to me
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Links Section */}
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-3">
+                    <Zap className="h-4 w-4 text-[#F59E0B]" />
+                    Quick Links
+                  </h2>
+                  <div className="bg-white dark:bg-card rounded-lg shadow-sm border p-4">
+                    <QuickLinksHorizontal />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
