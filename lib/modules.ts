@@ -49,10 +49,10 @@ export const moduleConfigs: Record<string, ModuleConfig> = {
   attendance: {
     name: "attendance",
     title: "Attendance",
-    description: "Track attendance",
+    description: "Track daily attendance and leave management",
     icon: "Calendar",
     path: "/attendance",
-    status: "coming_soon"
+    status: "active"
   },
   compare_access: {
     name: "compare_access",

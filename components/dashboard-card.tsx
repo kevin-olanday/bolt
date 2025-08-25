@@ -168,7 +168,7 @@ export function DashboardCard({
       <CardContent className="pt-0 pb-3 px-4 relative z-10 flex-shrink-0">
         <Button
           variant={gradient ? "secondary" : "default"}
-          size="xs"
+          size="sm"
           className={cn(
             "transition-all duration-300 font-medium text-xs w-full h-8 whitespace-normal leading-tight",
             gradient
