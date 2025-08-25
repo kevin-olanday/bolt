@@ -63,8 +63,7 @@ export function TopNav() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full hover:bg-white/20">
                 <Avatar className="h-8 w-8 border-2 border-white/30">
-                  <AvatarImage src="/placeholder-user.png" alt="User" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarFallback>KO</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>

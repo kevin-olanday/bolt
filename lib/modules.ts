@@ -109,6 +109,14 @@ export const moduleConfigs: Record<string, ModuleConfig> = {
     icon: "MessageCircle",
     path: "/sprint-pass",
     status: "coming_soon"
+  },
+  safe_paste: {
+    name: "safe_paste",
+    title: "Safe Paste",
+    description: "Securely share text snippets and code",
+    icon: "FileLock",
+    path: "/safe-paste",
+    status: "active"
   }
 }
 

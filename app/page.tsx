@@ -20,6 +20,8 @@ import {
   Sun,
   Moon,
   Star,
+  FileText,
+  FileLock,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useEffect, useState } from "react"
@@ -104,6 +106,8 @@ const getIconComponent = (iconName: string) => {
     MessageSquare: MessageSquare,
     MessageCircle: MessageCircle,
     Zap: Zap,
+    FileText: FileText,
+    FileLock: FileLock,
   }
   return iconMap[iconName] || Wrench // Default to Wrench if icon not found
 }
@@ -133,12 +137,23 @@ export default function Dashboard() {
           return
         }
 
-        const sortedModules =
-          data?.sort((a, b) => {
-            if (a.status === "active" && b.status !== "active") return -1
-            if (a.status !== "active" && b.status === "active") return 1
-            return a.sort_order - b.sort_order
-          }) || []
+        // Debug: Log the modules before sorting
+        console.log("Modules before sorting:", data?.map(m => ({ name: m.name, status: m.status, sort_order: m.sort_order })))
+        
+        // Force complete reordering with role-based access priority
+        const sortedModules = data ? [
+          // First: Accessible active modules (user can actually use)
+          ...data.filter(m => m.status === "active" && hasModuleAccess(m)).sort((a, b) => a.sort_order - b.sort_order),
+          // Second: Inaccessible active modules (role-restricted but active)
+          ...data.filter(m => m.status === "active" && !hasModuleAccess(m)).sort((a, b) => a.sort_order - b.sort_order),
+          // Third: All coming_soon modules
+          ...data.filter(m => m.status === "coming_soon").sort((a, b) => a.sort_order - b.sort_order),
+          // Fourth: All other non-active modules (maintenance, disabled, etc.)
+          ...data.filter(m => m.status !== "active" && m.status !== "coming_soon").sort((a, b) => a.sort_order - b.sort_order)
+        ] : []
+        
+        // Debug: Log the modules after sorting
+        console.log("Modules after sorting:", sortedModules.map(m => ({ name: m.name, status: m.status, sort_order: m.sort_order })))
 
         setModules(sortedModules)
       } catch (error) {
